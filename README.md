@@ -4,7 +4,9 @@
 A simple script to replicate the ol' DynDNS functionality. Works well with PM2.
 
 ```
-npm install cloudflare-dyn-ip-updater
+git clone https://github.com/Sleavely/cloudflare-dyn-ip-updater.git
+cd cloudflare-dyn-ip-updater
+npm install
 ```
 
 Environment variables (can be set with a `.env` file):
