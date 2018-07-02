@@ -1,7 +1,9 @@
 
 # Cloudflare dynamic IP updater
 
-A simple script to replicate the ol' DynDNS functionality. Works well with PM2.
+A simple script to replicate the ol' DynDNS functionality.
+
+## Installing
 
 ```
 git clone https://github.com/Sleavely/cloudflare-dyn-ip-updater.git
@@ -16,3 +18,10 @@ Environment variables (can be set with a `.env` file):
 - **CLOUDFLARE_DOMAIN** _(required)_ The domain you wish to keep updated. E.g. `home.example.com`
 - **DEBUG** Set to `*` to log verbosely.
 
+## Running
+
+```
+DEBUG="*" npm start
+```
+
+It is recommended you run it as a background service in e.g. `pm2` unless you are keen to keep network traffic at a minimum.
