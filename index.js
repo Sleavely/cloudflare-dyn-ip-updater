@@ -2,16 +2,23 @@
 require('dotenv').config();
 const env = process.env;
 
+const {
+  CLOUDFLARE_EMAIL,
+  CLOUDFLARE_APIKEY,
+  CLOUDFLARE_DOMAIN,
+  REFRESH_RATE = 2,
+} = process.env
+
 const debug = require('debug')('cf-dyn-ip');
 const fetch = require('node-fetch');
 
 const cloudflare = require('cloudflare')({
-  email: env.CLOUDFLARE_EMAIL,
-  key: env.CLOUDFLARE_APIKEY
+  email: CLOUDFLARE_EMAIL,
+  key: CLOUDFLARE_APIKEY
 });
 
-const ZONE = env.CLOUDFLARE_DOMAIN.split('.').slice(-2).join('.');
-const RECORD = env.CLOUDFLARE_DOMAIN.split('.').slice(0, -2).join('.');
+const ZONE = CLOUDFLARE_DOMAIN.split('.').slice(-2).join('.');
+const RECORD = CLOUDFLARE_DOMAIN.split('.').slice(0, -2).join('.');
 let currentRecord = undefined;
 
 const getIp = function(){
@@ -28,7 +35,7 @@ const refreshIp = function(){
     .then((currentIp) => {
       if(currentIp != currentRecord.content) {
         currentRecord.content = currentIp;
-        return cloudflare.dnsRecords.edit(currentRecord.zone_id, currentRecord.id, {type:'A', name: env.CLOUDFLARE_DOMAIN, content: currentIp})
+        return cloudflare.dnsRecords.edit(currentRecord.zone_id, currentRecord.id, {type:'A', name: CLOUDFLARE_DOMAIN, content: currentIp})
           .then((res) => {
             currentRecord = res.result;
             debug('Updated record: %o', currentRecord);
@@ -58,7 +65,7 @@ Promise.resolve()
   return cloudflare.dnsRecords.browse(zone.id)
     .then((records) => {
       let record = records.result.find((record) => {
-        return record.type == 'A' && record.name == env.CLOUDFLARE_DOMAIN;
+        return record.type == 'A' && record.name == CLOUDFLARE_DOMAIN;
       });
       if(!record) {
         debug('Couldnt find an appropriate record in the zone: %o', records.result.map((record) => record.name.substr(0, record.name.length-ZONE.length)));
@@ -73,9 +80,9 @@ Promise.resolve()
   return refreshIp();
 })
 .then(() => {
-  debug('Boot finished. Setting interval.');
+  debug(`Boot finished. Setting interval at every %d minutes.`, REFRESH_RATE);
   setInterval(() => {
     refreshIp();
-  }, 1000*60*2); // Every 2 minutes
+  }, 1000*60*REFRESH_RATE); // Every 2 minutes
 });
 
