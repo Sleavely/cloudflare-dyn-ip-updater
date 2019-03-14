@@ -16,6 +16,7 @@ Environment variables (can be set with a `.env` file):
 - **CLOUDFLARE_EMAIL** _(required)_
 - **CLOUDFLARE_APIKEY** _(required)_ You can find this under "My Profile" in CF
 - **CLOUDFLARE_DOMAIN** _(required)_ The domain you wish to keep updated. E.g. `home.example.com`
+- **REFRESH_RATE** Number of minutes between checking for new IP.
 - **DEBUG** Set to `*` to log verbosely.
 
 ## Running
